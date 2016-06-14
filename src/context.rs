@@ -147,7 +147,7 @@ impl Context {
             let mut len: duk_size_t = 0;
             let str = duk_safe_to_lstring(self.ptr, -1, &mut len);
             let msg = try!(from_lstring(str, len));
-            Err(DuktapeError::from_str(&msg[]))
+            Err(DuktapeError::from_str(&msg[..]))
         }
     }
 

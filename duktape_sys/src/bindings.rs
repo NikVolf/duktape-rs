@@ -5,10 +5,11 @@
 
 // Import more accurate versions of our typedefs.
 use generated::*;
+use libc::{c_char, c_void};
 
 // Everything from here down is from bindgen, with uses of va_list
 // commented out, and `extern "C"` replaced by `unsafe extern "C"`.
-pub type duk_context = ::libc::c_void;
+pub type duk_context = c_void;
 pub type duk_memory_functions = Struct_duk_memory_functions;
 pub type duk_function_list_entry = Struct_duk_function_list_entry;
 pub type duk_number_list_entry = Struct_duk_number_list_entry;
@@ -16,28 +17,28 @@ pub type duk_c_function =
     ::std::option::Option<unsafe extern "C" fn(arg1: *mut duk_context) -> duk_ret_t>;
 pub type duk_alloc_function =
     ::std::option::Option<unsafe extern "C" fn
-                              (arg1: *mut ::libc::c_void, arg2: duk_size_t)
-                              -> *mut ::libc::c_void>;
+                              (arg1: *mut c_void, arg2: duk_size_t)
+                              -> *mut c_void>;
 pub type duk_realloc_function =
     ::std::option::Option<unsafe extern "C" fn
-                              (arg1: *mut ::libc::c_void,
-                               arg2: *mut ::libc::c_void, arg3: duk_size_t)
-                              -> *mut ::libc::c_void>;
+                              (arg1: *mut c_void,
+                               arg2: *mut c_void, arg3: duk_size_t)
+                              -> *mut c_void>;
 pub type duk_free_function =
     ::std::option::Option<unsafe extern "C" fn
-                              (arg1: *mut ::libc::c_void,
-                               arg2: *mut ::libc::c_void)>;
+                              (arg1: *mut c_void,
+                               arg2: *mut c_void)>;
 pub type duk_fatal_function =
     ::std::option::Option<unsafe extern "C" fn
                               (arg1: *mut duk_context, arg2: duk_errcode_t,
-                               arg3: *const ::libc::c_char)>;
+                               arg3: *const c_char)>;
 pub type duk_decode_char_function =
     ::std::option::Option<unsafe extern "C" fn
-                              (arg1: *mut ::libc::c_void,
+                              (arg1: *mut c_void,
                                arg2: duk_codepoint_t)>;
 pub type duk_map_char_function =
     ::std::option::Option<unsafe extern "C" fn
-                              (arg1: *mut ::libc::c_void,
+                              (arg1: *mut c_void,
                                arg2: duk_codepoint_t) -> duk_codepoint_t>;
 pub type duk_safe_call_function =
     ::std::option::Option<unsafe extern "C" fn(arg1: *mut duk_context) -> duk_ret_t>;
@@ -46,17 +47,17 @@ pub struct Struct_duk_memory_functions {
     pub alloc_func: duk_alloc_function,
     pub realloc_func: duk_realloc_function,
     pub free_func: duk_free_function,
-    pub udata: *mut ::libc::c_void,
+    pub udata: *mut c_void,
 }
 #[repr(C)]
 pub struct Struct_duk_function_list_entry {
-    pub key: *const ::libc::c_char,
+    pub key: *const c_char,
     pub value: duk_c_function,
     pub nargs: duk_idx_t,
 }
 #[repr(C)]
 pub struct Struct_duk_number_list_entry {
-    pub key: *const ::libc::c_char,
+    pub key: *const c_char,
     pub value: duk_double_t,
 }
 extern "C" { }
@@ -64,29 +65,29 @@ extern "C" {
     pub fn duk_create_heap(alloc_func: duk_alloc_function,
                            realloc_func: duk_realloc_function,
                            free_func: duk_free_function,
-                           alloc_udata: *mut ::libc::c_void,
+                           alloc_udata: *mut c_void,
                            fatal_handler: duk_fatal_function)
      -> *mut duk_context;
     pub fn duk_destroy_heap(ctx: *mut duk_context);
     pub fn duk_alloc_raw(ctx: *mut duk_context, size: duk_size_t)
-     -> *mut ::libc::c_void;
-    pub fn duk_free_raw(ctx: *mut duk_context, ptr: *mut ::libc::c_void);
-    pub fn duk_realloc_raw(ctx: *mut duk_context, ptr: *mut ::libc::c_void,
-                           size: duk_size_t) -> *mut ::libc::c_void;
+     -> *mut c_void;
+    pub fn duk_free_raw(ctx: *mut duk_context, ptr: *mut c_void);
+    pub fn duk_realloc_raw(ctx: *mut duk_context, ptr: *mut c_void,
+                           size: duk_size_t) -> *mut c_void;
     pub fn duk_alloc(ctx: *mut duk_context, size: duk_size_t)
-     -> *mut ::libc::c_void;
-    pub fn duk_free(ctx: *mut duk_context, ptr: *mut ::libc::c_void);
-    pub fn duk_realloc(ctx: *mut duk_context, ptr: *mut ::libc::c_void,
-                       size: duk_size_t) -> *mut ::libc::c_void;
+     -> *mut c_void;
+    pub fn duk_free(ctx: *mut duk_context, ptr: *mut c_void);
+    pub fn duk_realloc(ctx: *mut duk_context, ptr: *mut c_void,
+                       size: duk_size_t) -> *mut c_void;
     pub fn duk_get_memory_functions(ctx: *mut duk_context,
                                     out_funcs: *mut duk_memory_functions);
     pub fn duk_gc(ctx: *mut duk_context, flags: duk_uint_t);
     pub fn duk_throw(ctx: *mut duk_context);
     pub fn duk_error_raw(ctx: *mut duk_context, err_code: duk_errcode_t,
-                         filename: *const ::libc::c_char, line: duk_int_t,
-                         fmt: *const ::libc::c_char, ...);
+                         filename: *const c_char, line: duk_int_t,
+                         fmt: *const c_char, ...);
     pub fn duk_fatal(ctx: *mut duk_context, err_code: duk_errcode_t,
-                     err_msg: *const ::libc::c_char);
+                     err_msg: *const c_char);
     pub fn duk_is_strict_call(ctx: *mut duk_context) -> duk_bool_t;
     pub fn duk_is_constructor_call(ctx: *mut duk_context) -> duk_bool_t;
     pub fn duk_normalize_index(ctx: *mut duk_context, index: duk_idx_t)
@@ -128,21 +129,21 @@ extern "C" {
     pub fn duk_push_nan(ctx: *mut duk_context);
     pub fn duk_push_int(ctx: *mut duk_context, val: duk_int_t);
     pub fn duk_push_uint(ctx: *mut duk_context, val: duk_uint_t);
-    pub fn duk_push_string(ctx: *mut duk_context, str: *const ::libc::c_char)
-     -> *const ::libc::c_char;
-    pub fn duk_push_lstring(ctx: *mut duk_context, str: *const ::libc::c_char,
-                            len: duk_size_t) -> *const ::libc::c_char;
-    pub fn duk_push_pointer(ctx: *mut duk_context, p: *mut ::libc::c_void);
+    pub fn duk_push_string(ctx: *mut duk_context, str: *const c_char)
+     -> *const c_char;
+    pub fn duk_push_lstring(ctx: *mut duk_context, str: *const c_char,
+                            len: duk_size_t) -> *const c_char;
+    pub fn duk_push_pointer(ctx: *mut duk_context, p: *mut c_void);
     pub fn duk_push_sprintf(ctx: *mut duk_context,
-                            fmt: *const ::libc::c_char, ...)
-     -> *const ::libc::c_char;
+                            fmt: *const c_char, ...)
+     -> *const c_char;
     //pub fn duk_push_vsprintf(ctx: *mut duk_context,
-    //                         fmt: *const ::libc::c_char, ap: va_list)
-    // -> *const ::libc::c_char;
+    //                         fmt: *const c_char, ap: va_list)
+    // -> *const c_char;
     pub fn duk_push_string_file_raw(ctx: *mut duk_context,
-                                    path: *const ::libc::c_char,
+                                    path: *const c_char,
                                     flags: duk_uint_t)
-     -> *const ::libc::c_char;
+     -> *const c_char;
     pub fn duk_push_this(ctx: *mut duk_context);
     pub fn duk_push_current_function(ctx: *mut duk_context);
     pub fn duk_push_current_thread(ctx: *mut duk_context);
@@ -159,16 +160,16 @@ extern "C" {
      -> duk_idx_t;
     pub fn duk_push_error_object_raw(ctx: *mut duk_context,
                                      err_code: duk_errcode_t,
-                                     filename: *const ::libc::c_char,
+                                     filename: *const c_char,
                                      line: duk_int_t,
-                                     fmt: *const ::libc::c_char, ...)
+                                     fmt: *const c_char, ...)
      -> duk_idx_t;
     pub fn duk_push_buffer(ctx: *mut duk_context, size: duk_size_t,
-                           dynamic: duk_bool_t) -> *mut ::libc::c_void;
+                           dynamic: duk_bool_t) -> *mut c_void;
     pub fn duk_push_fixed_buffer(ctx: *mut duk_context, size: duk_size_t)
-     -> *mut ::libc::c_void;
+     -> *mut c_void;
     pub fn duk_push_dynamic_buffer(ctx: *mut duk_context, size: duk_size_t)
-     -> *mut ::libc::c_void;
+     -> *mut c_void;
     pub fn duk_pop(ctx: *mut duk_context);
     pub fn duk_pop_n(ctx: *mut duk_context, count: duk_idx_t);
     pub fn duk_pop_2(ctx: *mut duk_context);
@@ -226,13 +227,13 @@ extern "C" {
     pub fn duk_get_uint(ctx: *mut duk_context, index: duk_idx_t)
      -> duk_uint_t;
     pub fn duk_get_string(ctx: *mut duk_context, index: duk_idx_t)
-     -> *const ::libc::c_char;
+     -> *const c_char;
     pub fn duk_get_lstring(ctx: *mut duk_context, index: duk_idx_t,
-                           out_len: *mut duk_size_t) -> *const ::libc::c_char;
+                           out_len: *mut duk_size_t) -> *const c_char;
     pub fn duk_get_buffer(ctx: *mut duk_context, index: duk_idx_t,
-                          out_size: *mut duk_size_t) -> *mut ::libc::c_void;
+                          out_size: *mut duk_size_t) -> *mut c_void;
     pub fn duk_get_pointer(ctx: *mut duk_context, index: duk_idx_t)
-     -> *mut ::libc::c_void;
+     -> *mut c_void;
     pub fn duk_get_c_function(ctx: *mut duk_context, index: duk_idx_t)
      -> duk_c_function;
     pub fn duk_get_context(ctx: *mut duk_context, index: duk_idx_t)
@@ -250,15 +251,15 @@ extern "C" {
     pub fn duk_require_uint(ctx: *mut duk_context, index: duk_idx_t)
      -> duk_uint_t;
     pub fn duk_require_string(ctx: *mut duk_context, index: duk_idx_t)
-     -> *const ::libc::c_char;
+     -> *const c_char;
     pub fn duk_require_lstring(ctx: *mut duk_context, index: duk_idx_t,
                                out_len: *mut duk_size_t)
-     -> *const ::libc::c_char;
+     -> *const c_char;
     pub fn duk_require_buffer(ctx: *mut duk_context, index: duk_idx_t,
                               out_size: *mut duk_size_t)
-     -> *mut ::libc::c_void;
+     -> *mut c_void;
     pub fn duk_require_pointer(ctx: *mut duk_context, index: duk_idx_t)
-     -> *mut ::libc::c_void;
+     -> *mut c_void;
     pub fn duk_require_c_function(ctx: *mut duk_context, index: duk_idx_t)
      -> duk_c_function;
     pub fn duk_require_context(ctx: *mut duk_context, index: duk_idx_t)
@@ -278,19 +279,19 @@ extern "C" {
     pub fn duk_to_uint16(ctx: *mut duk_context, index: duk_idx_t)
      -> duk_uint16_t;
     pub fn duk_to_string(ctx: *mut duk_context, index: duk_idx_t)
-     -> *const ::libc::c_char;
+     -> *const c_char;
     pub fn duk_to_lstring(ctx: *mut duk_context, index: duk_idx_t,
-                          out_len: *mut duk_size_t) -> *const ::libc::c_char;
+                          out_len: *mut duk_size_t) -> *const c_char;
     pub fn duk_to_buffer(ctx: *mut duk_context, index: duk_idx_t,
-                         out_size: *mut duk_size_t) -> *mut ::libc::c_void;
+                         out_size: *mut duk_size_t) -> *mut c_void;
     pub fn duk_to_fixed_buffer(ctx: *mut duk_context, index: duk_idx_t,
                                out_size: *mut duk_size_t)
-     -> *mut ::libc::c_void;
+     -> *mut c_void;
     pub fn duk_to_dynamic_buffer(ctx: *mut duk_context, index: duk_idx_t,
                                  out_size: *mut duk_size_t)
-     -> *mut ::libc::c_void;
+     -> *mut c_void;
     pub fn duk_to_pointer(ctx: *mut duk_context, index: duk_idx_t)
-     -> *mut ::libc::c_void;
+     -> *mut c_void;
     pub fn duk_to_object(ctx: *mut duk_context, index: duk_idx_t);
     pub fn duk_to_defaultvalue(ctx: *mut duk_context, index: duk_idx_t,
                                hint: duk_int_t);
@@ -298,46 +299,46 @@ extern "C" {
                             hint: duk_int_t);
     pub fn duk_safe_to_lstring(ctx: *mut duk_context, index: duk_idx_t,
                                out_len: *mut duk_size_t)
-     -> *const ::libc::c_char;
+     -> *const c_char;
     pub fn duk_base64_encode(ctx: *mut duk_context, index: duk_idx_t)
-     -> *const ::libc::c_char;
+     -> *const c_char;
     pub fn duk_base64_decode(ctx: *mut duk_context, index: duk_idx_t);
     pub fn duk_hex_encode(ctx: *mut duk_context, index: duk_idx_t)
-     -> *const ::libc::c_char;
+     -> *const c_char;
     pub fn duk_hex_decode(ctx: *mut duk_context, index: duk_idx_t);
     pub fn duk_json_encode(ctx: *mut duk_context, index: duk_idx_t)
-     -> *const ::libc::c_char;
+     -> *const c_char;
     pub fn duk_json_decode(ctx: *mut duk_context, index: duk_idx_t);
     pub fn duk_resize_buffer(ctx: *mut duk_context, index: duk_idx_t,
-                             new_size: duk_size_t) -> *mut ::libc::c_void;
+                             new_size: duk_size_t) -> *mut c_void;
     pub fn duk_get_prop(ctx: *mut duk_context, obj_index: duk_idx_t)
      -> duk_bool_t;
     pub fn duk_get_prop_string(ctx: *mut duk_context, obj_index: duk_idx_t,
-                               key: *const ::libc::c_char) -> duk_bool_t;
+                               key: *const c_char) -> duk_bool_t;
     pub fn duk_get_prop_index(ctx: *mut duk_context, obj_index: duk_idx_t,
                               arr_index: duk_uarridx_t) -> duk_bool_t;
     pub fn duk_put_prop(ctx: *mut duk_context, obj_index: duk_idx_t)
      -> duk_bool_t;
     pub fn duk_put_prop_string(ctx: *mut duk_context, obj_index: duk_idx_t,
-                               key: *const ::libc::c_char) -> duk_bool_t;
+                               key: *const c_char) -> duk_bool_t;
     pub fn duk_put_prop_index(ctx: *mut duk_context, obj_index: duk_idx_t,
                               arr_index: duk_uarridx_t) -> duk_bool_t;
     pub fn duk_del_prop(ctx: *mut duk_context, obj_index: duk_idx_t)
      -> duk_bool_t;
     pub fn duk_del_prop_string(ctx: *mut duk_context, obj_index: duk_idx_t,
-                               key: *const ::libc::c_char) -> duk_bool_t;
+                               key: *const c_char) -> duk_bool_t;
     pub fn duk_del_prop_index(ctx: *mut duk_context, obj_index: duk_idx_t,
                               arr_index: duk_uarridx_t) -> duk_bool_t;
     pub fn duk_has_prop(ctx: *mut duk_context, obj_index: duk_idx_t)
      -> duk_bool_t;
     pub fn duk_has_prop_string(ctx: *mut duk_context, obj_index: duk_idx_t,
-                               key: *const ::libc::c_char) -> duk_bool_t;
+                               key: *const c_char) -> duk_bool_t;
     pub fn duk_has_prop_index(ctx: *mut duk_context, obj_index: duk_idx_t,
                               arr_index: duk_uarridx_t) -> duk_bool_t;
     pub fn duk_get_global_string(ctx: *mut duk_context,
-                                 key: *const ::libc::c_char) -> duk_bool_t;
+                                 key: *const c_char) -> duk_bool_t;
     pub fn duk_put_global_string(ctx: *mut duk_context,
-                                 key: *const ::libc::c_char) -> duk_bool_t;
+                                 key: *const c_char) -> duk_bool_t;
     pub fn duk_get_prototype(ctx: *mut duk_context, index: duk_idx_t);
     pub fn duk_set_prototype(ctx: *mut duk_context, index: duk_idx_t);
     pub fn duk_get_finalizer(ctx: *mut duk_context, index: duk_idx_t);
@@ -365,10 +366,10 @@ extern "C" {
     pub fn duk_join(ctx: *mut duk_context, count: duk_idx_t);
     pub fn duk_decode_string(ctx: *mut duk_context, index: duk_idx_t,
                              callback: duk_decode_char_function,
-                             udata: *mut ::libc::c_void);
+                             udata: *mut c_void);
     pub fn duk_map_string(ctx: *mut duk_context, index: duk_idx_t,
                           callback: duk_map_char_function,
-                          udata: *mut ::libc::c_void);
+                          udata: *mut c_void);
     pub fn duk_substring(ctx: *mut duk_context, index: duk_idx_t,
                          start_char_offset: duk_size_t,
                          end_char_offset: duk_size_t);
@@ -392,14 +393,14 @@ extern "C" {
     pub fn duk_safe_call(ctx: *mut duk_context, func: duk_safe_call_function,
                          nargs: duk_idx_t, nrets: duk_idx_t) -> duk_int_t;
     pub fn duk_eval_raw(ctx: *mut duk_context,
-                        src_buffer: *const ::libc::c_char,
+                        src_buffer: *const c_char,
                         src_length: duk_size_t, flags: duk_uint_t)
      -> duk_int_t;
     pub fn duk_compile_raw(ctx: *mut duk_context,
-                           src_buffer: *const ::libc::c_char,
+                           src_buffer: *const c_char,
                            src_length: duk_size_t, flags: duk_uint_t)
      -> duk_int_t;
     pub fn duk_log(ctx: *mut duk_context, level: duk_int_t,
-                   fmt: *const ::libc::c_char, ...);
+                   fmt: *const c_char, ...);
     pub fn duk_push_context_dump(ctx: *mut duk_context);
 }

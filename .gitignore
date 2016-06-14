@@ -1,3 +1,5 @@
 /target
 /Cargo.lock
 /duktape_sys/src/generate
+
+.idea

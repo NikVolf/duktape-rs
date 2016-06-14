@@ -8,8 +8,6 @@
 //! We do not yet provide replacements for duktape function macros, but
 //! pull requests are very welcome.
 
-#![feature(libc)]
-
 #![allow(non_camel_case_types)]
 
 extern crate libc;
